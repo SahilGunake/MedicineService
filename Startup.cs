@@ -30,6 +30,17 @@ namespace MedicineService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "AllowOrigin",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
+                    });
+            });
+
             services.AddDbContext<MedicalDBContext>(o => o.UseSqlServer(Configuration.GetConnectionString("MedicalDB")));
             services.AddControllers();
             services.AddTransient<IMedicineRepository, MedicineRepository>();
@@ -54,6 +65,8 @@ namespace MedicineService
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("AllowOrigin");
 
             app.UseAuthorization();
 
